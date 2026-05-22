@@ -2,40 +2,44 @@
 
 import React from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   LayoutDashboard,
-  LayoutTemplate,
-  FolderOpen,
   Globe,
-  ChevronDown,
+  LogOut,
   Sparkles,
 } from "lucide-react";
 import Button from "@/components/ui/Button";
+import { createClient } from "@/lib/supabase/client";
 
 interface TopNavProps {
   projectName?: string;
+  projectId?: string;
   sectionCount?: number;
   onPublish?: () => void;
 }
 
-const NAV_ITEMS = [
-  { label: "Dashboard", icon: LayoutDashboard, active: false },
-  { label: "Templates", icon: LayoutTemplate, active: false },
-  { label: "My Projects", icon: FolderOpen, active: true },
-] as const;
-
 export default function TopNav({
   projectName = "Untitled Project",
+  projectId,
   sectionCount = 0,
   onPublish,
 }: TopNavProps) {
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    router.push("/login");
+    router.refresh();
+  };
   return (
     <header className="flex items-center justify-between h-14 px-4 lg:px-6 border-b border-border bg-surface-elevated flex-shrink-0 z-30 shadow-soft-sm">
       <div className="flex items-center gap-6 lg:gap-10 min-w-0">
         <Link
-          href="/"
+          href="/dashboard"
           className="flex items-center gap-2.5 flex-shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-lg"
-          aria-label="Aetheria home"
+          aria-label="Aetheria dashboard"
         >
           <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary text-primary-foreground shadow-soft-md">
             <Sparkles className="w-4 h-4" aria-hidden="true" />
@@ -49,23 +53,18 @@ export default function TopNav({
           className="hidden md:flex items-center gap-1"
           aria-label="Main navigation"
         >
-          {NAV_ITEMS.map((item) => {
-            const Icon = item.icon;
-            return (
-              <button
-                key={item.label}
-                type="button"
-                className={`inline-flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
-                  item.active
-                    ? "bg-surface text-foreground"
-                    : "text-muted hover:text-foreground hover:bg-surface"
-                }`}
-              >
-                <Icon className="w-4 h-4" aria-hidden="true" />
-                {item.label}
-              </button>
-            );
-          })}
+          <Link
+            href="/dashboard"
+            className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-muted hover:text-foreground hover:bg-surface transition-colors"
+          >
+            <LayoutDashboard className="w-4 h-4" aria-hidden="true" />
+            Dashboard
+          </Link>
+          {projectId && (
+            <span className="text-xs text-muted px-2 truncate max-w-[120px]">
+              {projectId.slice(0, 8)}…
+            </span>
+          )}
         </nav>
       </div>
 
@@ -89,13 +88,12 @@ export default function TopNav({
 
         <button
           type="button"
-          className="flex items-center gap-2 pl-1 pr-2 py-1 rounded-lg hover:bg-surface transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-          aria-label="User menu"
+          onClick={handleLogout}
+          className="flex items-center gap-2 px-2 py-1 rounded-lg hover:bg-surface transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary text-muted hover:text-foreground"
+          aria-label="Sign out"
         >
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-xs font-semibold text-white">
-            U
-          </div>
-          <ChevronDown className="w-4 h-4 text-muted hidden sm:block" aria-hidden="true" />
+          <LogOut className="w-4 h-4" aria-hidden="true" />
+          <span className="hidden sm:inline text-sm">Sign out</span>
         </button>
       </div>
     </header>
