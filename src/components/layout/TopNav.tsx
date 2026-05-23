@@ -10,6 +10,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import Button from "@/components/ui/Button";
+import DocNavLink from "@/components/documentation/DocNavLink";
 import { createClient } from "@/lib/supabase/client";
 
 interface TopNavProps {
@@ -85,6 +86,8 @@ export default function TopNav({
           <Globe className="w-3.5 h-3.5" aria-hidden="true" />
           <span className="hidden xs:inline sm:inline">Publish</span>
         </Button>
+
+        <DocNavLink />
 
         <button
           type="button"

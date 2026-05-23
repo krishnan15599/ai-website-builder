@@ -12,6 +12,7 @@ import {
   Trash2,
 } from "lucide-react";
 import Button from "@/components/ui/Button";
+import DocNavLink from "@/components/documentation/DocNavLink";
 import type { DbProject } from "@/types/database";
 import { createClient } from "@/lib/supabase/client";
 
@@ -114,14 +115,17 @@ export default function DashboardClient() {
             </div>
             <span className="font-semibold text-foreground">Aetheria</span>
           </Link>
-          <button
-            type="button"
-            onClick={handleLogout}
-            className="inline-flex items-center gap-2 text-sm text-muted hover:text-foreground transition-colors cursor-pointer"
-          >
-            <LogOut className="w-4 h-4" />
-            Sign out
-          </button>
+          <div className="flex items-center gap-3">
+            <DocNavLink />
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="inline-flex items-center gap-2 text-sm text-muted hover:text-foreground transition-colors cursor-pointer"
+            >
+              <LogOut className="w-4 h-4" />
+              Sign out
+            </button>
+          </div>
         </div>
       </header>
 
